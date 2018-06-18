@@ -19,22 +19,24 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-class ProjectElement(models.Model):
-
+class Element(models.Model):
     name = models.CharField(max_length = 30)
-    description = models.CharField(max_length = 500)
     date_added = models.DateField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default = 0)
-#    file = models.FileField(upload_to='upload/')
-    elements = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    class Meta:
+        abstract = True
 
+class Folder(Element):
+    folder_element = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):
         return self.name
 
-class Folder(models.Model):
 
-    name = models.CharField(max_length = 30)
-    date_added = models.DateField()
+class ProjectElement(Element):
+    description = models.CharField(max_length = 500)
+#    file = models.FileField(upload_to='uploads/')
+    elements = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    folder = models.ManyToManyField(Folder)
 
     def __str__(self):
         return self.name
