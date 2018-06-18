@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.template import loader
-from .forms import AccountForm, LoginForm, ProjectForm
+from .forms import AccountForm, LoginForm, ProjectForm, ElementForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404
@@ -8,6 +8,32 @@ from .models import Project, Account, ProjectElement
 from datetime import date
 
 # Create your views here.
+
+
+def new_element(request, project_id):
+    if request.user.is_authenticated:
+
+        if request.method == 'POST':
+            form = ElementForm(request.POST)
+
+            if form.is_valid():
+                element_obj = form.cleaned_data
+                name = element_obj['name']
+                description = element_obj['description']
+
+                if not(ProjectElement.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
+                    ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                    ele.save()
+                #    ele.project.set(project_id)
+                    id = str(ele.id)
+                    return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
+        else:
+            form = ElementForm()
+
+    else:
+        return redirect('/login')
+
+    return render(request, 'new_element.html', {'form': form})
 
 
 def element_detail(request, element_id, project_id):
@@ -140,7 +166,9 @@ def landing_page(request):                  #creates a new user account
                 a.save()
                 user = authenticate(username = username, password = password)
                 login(request, user)
-            return HttpResponseRedirect('/projects')
+                return HttpResponseRedirect('/projects')
+            else:
+                form = AccountForm()
     else:
         form = AccountForm()
 

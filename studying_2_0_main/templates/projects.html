@@ -2,11 +2,10 @@
 
 
 {% block content %}
-
+<div class="projects">
 {% for Project in project_list %}
   <li><a href='/projects/{{ Project.id }}'> {{Project}}</a> </li>
 {% endfor %}
-
   <a href='new_project'>new project<a/>
-
+</div>
 {% endblock %}

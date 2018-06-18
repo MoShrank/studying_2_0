@@ -30,3 +30,11 @@ class ProjectElement(models.Model):
 
     def __str__(self):
         return self.name
+
+class Folder(models.Model):
+
+    name = models.CharField(max_length = 30)
+    date_added = models.DateField()
+
+    def __str__(self):
+        return self.name

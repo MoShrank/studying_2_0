@@ -1,15 +1,16 @@
 
 body {
-  display: inline-block;
+
 }
 
 ul {
   position: fixed;
   left: 0;
+  top: 0;
   list-style-type: none;
-  margin-top: 20px;
+  margin: 0;
   padding: 0;
-  width: 160px;
+  width: 15%;
   height: 100%;
   background-color: #4f5060;
 }
@@ -26,30 +27,33 @@ li a:hover {
   background-color: #393c77;
 }
 
+.welcome {
+  font-size: 32px;
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  left: 15%;
+  margin: 0;
+}
+
+.projects {
+  list-style-type: none;
+}
+
+.projects a {
+  text-decoration: none;
+}
+
+
+
 input[type=checkbox] {
    position: absolute;
    top: -9999px;
    left: -9999px;
-
 }
 
 input[type=checkbox]:checked ~ ul {
    display: none;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
-.welcome {
-  font-size: 32px;
-  margin: auto;
-  width: 40%;
-  text-align: center;
-}
-
-div {
-  display: inherit;
 }

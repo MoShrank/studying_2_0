@@ -15,4 +15,5 @@ path('welcome/', views.welcome, name='welcome'),
 path('projects/<int:project_id>/', views.project_detail, name='project_detail'),
 path('projects/new_project', views.new_project, name='new_project'),
 path('projects/<int:project_id>/elements/<int:element_id>', views.element_detail, name='element_detail'),
+path('projects/<int:project_id>/elements/new_element', views.new_element, name='new_element'),
 ]

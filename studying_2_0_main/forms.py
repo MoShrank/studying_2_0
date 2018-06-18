@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Project
+from .models import Project, ProjectElement
 
 class AccountForm(forms.Form):
         username = forms.CharField(max_length = 30)
@@ -19,3 +19,8 @@ class ProjectForm(ModelForm):
     class Meta:
         model = Project
         fields = ['name', 'description', 'accounts']
+
+class ElementForm(ModelForm):
+    class Meta:
+        model = ProjectElement
+        fields = ['name', 'description']
