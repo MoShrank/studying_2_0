@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<style>
+.register {
+  display:flex;
+  justify-content:center;
+  align-items: center;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+}
+</style>
+<div class="register">
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Register"/>
+  </form>
+  <a href="/login"> Already regîstered? Just login!</a>
+</div>
+{% endblock %}

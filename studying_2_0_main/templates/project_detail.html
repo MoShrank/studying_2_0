@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<p>Name: {{ project }} </p>
+<p>Description: {{ project.description}} </p>
+<P>Elements: </p>
+{% for ProjectElement in elements %}
+    <p> <a href='/projects/{{project.id}}/elements/{{ProjectElement.id}}'>{{ProjectElement}}</a> </p>
+{% endfor %}
+
+{% endblock %}
