@@ -23,7 +23,7 @@ class ProjectForm(ModelForm):
 class ElementForm(ModelForm):
     class Meta:
         model = ProjectElement
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'folder_element']
 
 class FolderForm(ModelForm):
     class Meta:
