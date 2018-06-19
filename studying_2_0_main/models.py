@@ -23,20 +23,19 @@ class Element(models.Model):
     name = models.CharField(max_length = 30)
     date_added = models.DateField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default = 0)
+    self_elements = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     class Meta:
         abstract = True
 
 class Folder(Element):
-    folder_element = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+
     def __str__(self):
         return self.name
 
-
 class ProjectElement(Element):
+    folder_element = models.ManyToManyField(Folder, blank=True)
     description = models.CharField(max_length = 500)
 #    file = models.FileField(upload_to='uploads/')
-    elements = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    folder = models.ManyToManyField(Folder)
 
     def __str__(self):
         return self.name
