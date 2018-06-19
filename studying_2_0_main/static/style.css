@@ -46,6 +46,10 @@ li a:hover {
   text-decoration: none;
 }
 
+p a {
+  text-decoration: none;
+  color: black;
+}
 
 
 input[type=checkbox] {
