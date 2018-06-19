@@ -23,6 +23,7 @@ class Element(models.Model):
     name = models.CharField(max_length = 30)
     date_added = models.DateField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default = 0)
+    depth = models.IntegerField(default = 1)
 
     class Meta:
         abstract = True
