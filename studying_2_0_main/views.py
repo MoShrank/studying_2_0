@@ -1,13 +1,36 @@
 from django.shortcuts import render, redirect
 from django.template import loader
-from .forms import AccountForm, LoginForm, ProjectForm, ElementForm
+from .forms import AccountForm, LoginForm, ProjectForm, ElementForm, FolderForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404
-from .models import Project, Account, ProjectElement
+from .models import Project, Account, ProjectElement, Folder
 from datetime import date
 
 # Create your views here.
+
+def new_folder(request, project_id):
+    if request.user.is_authenticated:
+
+        if request.method == 'POST':
+            form = FolderForm(request.POST)
+
+            if form.is_valid():
+                form_obj = form.cleaned_data
+                name = element_obj['name']
+
+                if not(Folder.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
+                    fol = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                    fol.save()
+                    id = str(fol.id)
+                    return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
+        else:
+            form = FolderForm()
+
+    else:
+        return redirect('/login')
+
+    return render(request, 'new_element.html', {'form': form})
 
 
 def new_element(request, project_id):

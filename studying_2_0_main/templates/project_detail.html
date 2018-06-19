@@ -9,5 +9,6 @@
 {% for ProjectElement in elements %}
     <p> <a href='/projects/{{project.id}}/elements/{{ProjectElement.id}}'>{{ProjectElement}}</a> </p>
 {% endfor %}
-<a href='/projects/{{project.id}}/elements/new_element'> add element</a>
+<a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
+<a href='/projects/{{project.id}}/elements/new_element/folder'> add folder</a>
 {% endblock %}
