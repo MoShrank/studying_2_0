@@ -25,7 +25,17 @@ class ElementForm(ModelForm):
         model = ProjectElement
         fields = ['name', 'description', 'folder_element']
 
+    def __init__(self, current_project_id, *args, **kwargs):
+        super(ElementForm, self).__init__(*args, **kwargs)
+        self.fields['folder_element'].queryset = Folder.objects.filter(project = current_project_id)
+
+
+
 class FolderForm(ModelForm):
     class Meta:
         model = Folder
-        fields = ['name']
+        fields = ['name', 'self_elements']
+
+    def __init__(self, current_project_id, *args, **kwargs):
+        super(FolderForm, self).__init__(*args, **kwargs)
+        self.fields['self_elements'].queryset = Folder.objects.filter(project = current_project_id)

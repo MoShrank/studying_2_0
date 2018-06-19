@@ -25,7 +25,7 @@ def new_folder(request, project_id):
                     id = str(fol.id)
                     return HttpResponseRedirect('/projects/' + str(project_id))
         else:
-            form = FolderForm()
+            form = FolderForm(project_id)
 
     else:
         return redirect('/login')
@@ -51,7 +51,7 @@ def new_element(request, project_id):
                     id = str(ele.id)
                     return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
         else:
-            form = ElementForm()
+            form = ElementForm(project_id)
 
     else:
         return redirect('/login')
