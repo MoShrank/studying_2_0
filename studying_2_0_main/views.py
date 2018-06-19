@@ -16,14 +16,14 @@ def new_folder(request, project_id):
             form = FolderForm(request.POST)
 
             if form.is_valid():
-                form_obj = form.cleaned_data
-                name = element_obj['name']
+                folder_obj = form.cleaned_data
+                name = folder_obj['name']
 
                 if not(Folder.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
                     fol = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
                     fol.save()
                     id = str(fol.id)
-                    return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
+                    return HttpResponseRedirect('/projects/' + str(project_id))
         else:
             form = FolderForm()
 
