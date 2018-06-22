@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.
 
@@ -19,23 +20,26 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-class Element(models.Model):
+class Element(MPTTModel):
     name = models.CharField(max_length = 30)
     date_added = models.DateField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default = 0)
-    depth = models.IntegerField(default = 1)
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     class Meta:
         abstract = True
 
 class Folder(Element):
-    self_elements = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     def __str__(self):
         return self.name
 
 class ProjectElement(Element):
     folder_element = models.ForeignKey(Folder, on_delete=models.CASCADE, blank=True, null=True)
     description = models.CharField(max_length = 500)
+    parent = TreeForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, related_name='children1')
 #    file = models.FileField(upload_to='uploads/')
 
     def __str__(self):

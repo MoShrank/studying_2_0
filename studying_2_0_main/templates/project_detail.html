@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
 
+{% load mptt_tags %}
+
 
 {% block content %}
 
 <p>Name: {{ project }} </p>
-<p>Description: {{ project.description}} </p>
+<p>Description: {{ project.description }} </p>
 <P>Elements: </p>
-{% for ProjectElement in elements %}
-<p> <a href='/projects/{{project.id}}/elements/{{ProjectElement.id}}'>{{ProjectElement}}</a> </p>
-{% endfor %}
+
+  {% for fol,structure in folder|tree_info %}
+      {% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
+          {{ fol.name }}
+          {% for project in elements %}
+              {% if fol.id == project.folder_element_id %}
+              <li> <a href='/projects/{{project.id}}/elements/{{project.id}}'>{{project}}</a> </li>
+              {% endif %}
+
+          {% endfor %}
+      {% for level in structure.closed_levels %}</li></ul>{% endfor %}
+  {% endfor %}
+
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
 <a href='/projects/{{project.id}}/elements/new_element/folder'> add folder</a>
 {% endblock %}

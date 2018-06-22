@@ -37,7 +37,7 @@ def new_element(request, project_id):
     if request.user.is_authenticated:
 
         if request.method == 'POST':
-            form = ElementForm(request.POST)
+            form = ElementForm(project_id, request.POST)
 
             if form.is_valid():
                 element_obj = form.cleaned_data
@@ -47,8 +47,7 @@ def new_element(request, project_id):
                 if not(ProjectElement.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
                     ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
                     ele.save()
-                #    ele.project.set(project_id)
-                    id = str(ele.id)
+
                     return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
         else:
             form = ElementForm(project_id)
@@ -106,7 +105,8 @@ def project_detail(request, project_id):
         try:
             project = Project.objects.get(pk=project_id)
             elements = ProjectElement.objects.filter(project=project)
-            context = {'project' : project, 'elements' : elements}
+            folder = Folder.objects.filter(project=project)
+            context = {'project' : project, 'elements' : elements, 'folder' : folder}
         except:
             raise Http404("project does not exist")
         return render(request, 'project_detail.html', context)
