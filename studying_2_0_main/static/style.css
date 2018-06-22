@@ -3,7 +3,7 @@ body {
 
 }
 
-ul {
+.navbar {
   position: fixed;
   left: 0;
   top: 0;
@@ -15,7 +15,7 @@ ul {
   background-color: #4f5060;
 }
 
-li a {
+.navbar_element a {
   font-family: Sans-serif;
   color: #aeafc1;
   display: block;
@@ -23,13 +23,23 @@ li a {
   padding: 8px 0 8px 0;
 }
 
-li a:hover {
+.navbar a:hover {
   background-color: #393c77;
 }
 
 .welcome {
   font-size: 32px;
   text-align: center;
+}
+
+.new {
+  background-color: lightblue;
+}
+
+.element {
+  position: relative;
+
+  margin: 0;
 }
 
 .divider {
