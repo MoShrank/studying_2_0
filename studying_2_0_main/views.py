@@ -14,7 +14,6 @@ def new_folder(request, project_id):
 
         if request.method == 'POST':
             form = FolderForm(request.POST)
-
             if form.is_valid():
                 folder_obj = form.cleaned_data
                 name = folder_obj['name']
@@ -22,13 +21,12 @@ def new_folder(request, project_id):
                 if not(Folder.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
                     fol = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
                     fol.save()
-                    id = str(fol.id)
                     return HttpResponseRedirect('/projects/' + str(project_id))
         else:
-            form = FolderForm(project_id)
-
+            form = FolderForm()
     else:
         return redirect('/login')
+
 
     return render(request, 'new_element.html', {'form': form})
 
@@ -44,11 +42,9 @@ def new_element(request, project_id):
                 name = element_obj['name']
                 description = element_obj['description']
 
-                if not(ProjectElement.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
-                    ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
-                    ele.save()
-
-                    return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
+                ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                ele.save()
+                return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
         else:
             form = ElementForm(project_id)
 
@@ -99,6 +95,16 @@ def new_project(request):
     return render(request, 'new_project.html', {'form': form})
 
 
+def add_user(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            data = form.cleaned_data
+            account = data['account']
+
+
+
+    else:
+        return redirect('/login')
 
 def project_detail(request, project_id):
     if request.user.is_authenticated:

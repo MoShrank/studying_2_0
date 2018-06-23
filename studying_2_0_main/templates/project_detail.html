@@ -13,7 +13,7 @@
       {% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
           {{ fol.name }}
           {% for project in elements %}
-              {% if fol.id == project.folder_element_id %}
+              {% if fol == project.parent %}
               <li> <a href='/projects/{{project.id}}/elements/{{project.id}}'>{{project}}</a> </li>
               {% endif %}
 
