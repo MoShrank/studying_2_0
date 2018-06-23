@@ -16,9 +16,15 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, max_length = 30)
 
 class ProjectForm(ModelForm):
+    account = forms.CharField(max_length = 30)
     class Meta:
         model = Project
         fields = ['name', 'description', 'accounts']
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.fields['accounts'].widget.attrs['disabled'] = True
+    #    self.fields['accounts'].queryset = Account.objects.filter(project = self.id)
 
 class ElementForm(ModelForm):
     class Meta:
@@ -32,4 +38,4 @@ class ElementForm(ModelForm):
 class FolderForm(ModelForm):
     class Meta:
         model = Folder
-        fields = ['name']
+        fields = ['name', 'parent']

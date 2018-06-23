@@ -2,7 +2,6 @@
 
 
 {% block content %}
-
 <div class="register">
   <form action="" method="post">
     {% csrf_token %}
@@ -10,5 +9,6 @@
     <input type="submit" value="Register"/>
   </form>
   <a href="/login"> Already regîstered? Just login!</a>
+  <button id="but" type="button">
 </div>
 {% endblock %}
