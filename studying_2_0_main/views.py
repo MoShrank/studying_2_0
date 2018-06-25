@@ -42,7 +42,7 @@ def new_element(request, project_id):
 
                 ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
                 ele.save()
-                return HttpResponseRedirect('/projects/' + str(project_id) + '/elements/' + id)
+                return HttpResponseRedirect('/projects/' + str(project_id))
         else:
             form = ElementForm(project_id)
 

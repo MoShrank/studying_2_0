@@ -20,7 +20,11 @@
           {% endfor %}
       {% for level in structure.closed_levels %}</li></ul>{% endfor %}
   {% endfor %}
-
+{%for project in elements %}
+{% if project.parent is null %}
+<li> <a href='/projects/{{project.id}}/elements/{{project.id}}'>{{project}}</a> </li>
+{% endif %}
+{% endfor%}
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
 <a href='/projects/{{project.id}}/elements/new_element/folder'> add folder</a>
 {% endblock %}
