@@ -39,8 +39,9 @@ def new_element(request, project_id):
                 element_obj = form.cleaned_data
                 name = element_obj['name']
                 description = element_obj['description']
+                folder = element_obj['folder_element']
 
-                ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
                 ele.save()
                 return HttpResponseRedirect('/projects/' + str(project_id))
         else:
