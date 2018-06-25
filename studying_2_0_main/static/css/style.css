@@ -43,8 +43,9 @@ body {
 }
 
 .divider {
-  position: relative;
+  position: absolute;
   left: 15%;
+
   margin: 0;
 }
 

@@ -2,7 +2,7 @@
 
 $(function(){
 
-  $("#id_add_acc").click(function(){
+  $("#id_add_acc").click(function(){              //adds account to project when clicked
     var acc_name = $("#id_account").val();
     $.ajax({
         type: "POST",

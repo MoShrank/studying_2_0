@@ -184,6 +184,9 @@ def about(request):
 
 
 def login_user(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/welcome')
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -206,6 +209,12 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/login')
+
+
+def profile(request):
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/login')
 
 
 def landing_page(request):                  #creates a new user account
