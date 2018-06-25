@@ -83,7 +83,6 @@ def new_project(request):
                 account_str = account_str[:en]
                 account_list = account_str.split(", ")
 
-                print(account_list)
                 if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
                     pro = Project(name = name, description = description, creation_date = date.today())
                     pro.save()
@@ -101,6 +100,29 @@ def new_project(request):
 
     return render(request, 'new_project.html', {'form': form})
 
+
+def edit_project(request, project_id):
+    if request.user.is_authenticated:
+
+        if request.method == 'POST':
+            if form.is_valid():
+                project = form.cleaned_data
+                name = project_obj['name']
+                description = project_obj['description']
+
+                if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
+                    pro = Project(name = name, description = description)
+                    pro.save()
+                    id = str(pro.id)
+                    return HttpResponseRedirect('/projects/' + id)
+
+        else:
+            pro = Project.objects.get(id=project_id)
+            form = ProjectForm(initial={'name': pro.name, 'description' : pro.description})
+    else:
+        return redirect('/login')
+
+    return render(request, 'new_project.html', {'form': form})
 
 def add_user(request):
     account = request.POST.get('acc_name')
