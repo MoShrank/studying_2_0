@@ -5,8 +5,7 @@
 
 {% block content %}
 
-<button type="button" id="id_add_acc"> delete </button>
-<button type="button" id="id_add_acc"> edit </button>
+<a href="/projects/{{project.id}}/edit"> edit </a>
 
 <p>Name: {{ project }} </p>
 <p>Description: {{ project.description }} </p>
@@ -15,9 +14,9 @@
   {% for fol,structure in folder|tree_info %}
       {% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
           {{ fol.name }}
-          {% for project in elements %}
-              {% if fol == project.parent %}
-              <li> <a href='/projects/{{project.id}}/elements/{{project.id}}'>{{project}}</a> </li>
+          {% for ele in elements %}
+              {% if fol == ele.parent %}
+              <li> <a href='/projects/{{project.id}}/elements/{{ele.id}}'>{{ele}}</a> </li>
               {% endif %}
 
           {% endfor %}
