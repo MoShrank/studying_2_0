@@ -55,15 +55,28 @@ def new_element(request, project_id):
 
 def element_detail(request, element_id, project_id):
         if request.user.is_authenticated:
-            try:
-                element = ProjectElement.objects.get(pk=element_id)
+
+            ele = ProjectElement.objects.get(id=element_id)
+            name = ele.name
+            description = ele.description
+
+
+            data = {
+                'name' : name,
+                'description' : description
+            }
+            return JsonResponse(data)
+
+
+        #    try:
+        #        element = ProjectElement.objects.get(pk=element_id)
         #        element_list = ProjectElement.objects.filter(elements__id=element_id)
-                context = {'element' : element}
-            except:
-                raise Http404("element does not exist")
-            return render(request, 'element_detail.html', context)
-        else:
-            return redirect('/login')
+        #        context = {'element' : element}
+        #    except:
+        #        raise Http404("element does not exist")
+        #    return render(request, 'element_detail.html', context)
+        #else:
+        #    return redirect('/login')
 
 
 

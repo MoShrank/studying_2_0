@@ -5,9 +5,9 @@
 
 {% block content %}
 
-<a href="/projects/{{project.id}}/edit"> edit </a>
+<a href='/projects/{{project.id}}/edit'> edit </a>
 
-<p>Name: {{ project }} </p>
+<p class='project' id="{{project.id}}">Name: {{ project }} </p>
 <p>Description: {{ project.description }} </p>
 <P>Elements: </p>
 
@@ -16,17 +16,19 @@
           {{ fol.name }}
           {% for ele in elements %}
               {% if fol == ele.parent %}
-              <li> <a href='/projects/{{project.id}}/elements/{{ele.id}}'>{{ele}}</a> </li>
+              <li class='project_element' id='{{ele.id}}'> {{ele}} </li>
               {% endif %}
 
           {% endfor %}
       {% for level in structure.closed_levels %}</li></ul>{% endfor %}
   {% endfor %}
-{%for project in elements %}
-{% if project.parent is null %}
-<li> <a href='/projects/{{project.id}}/elements/{{project.id}}'>{{project}}</a> </li>
+{%for ele in elements %}
+{% if ele.parent is null %}
+<li class='project_element' id='{{ele.id}}'> {{ele}} </li>
 {% endif %}
 {% endfor%}
+
+
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
-<a href='/projects/{{project.id}}/elements/new_element/folder'> add folder</a>
+<a href='/projects/{{project.id}}/elements/new_element/folder' id="folder"> add folder</a>
 {% endblock %}
