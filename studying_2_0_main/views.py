@@ -3,7 +3,7 @@ from django.template import loader
 from .forms import AccountForm, LoginForm, ProjectForm, ElementForm, FolderForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, JsonResponse, HttpResponse
 from .models import Project, Account, ProjectElement, Folder
 from datetime import date
 
@@ -24,8 +24,6 @@ def new_folder(request, project_id):
                     return HttpResponseRedirect('/projects/' + str(project_id))
         else:
             form = FolderForm()
-    else:
-        return redirect('/login')
 
 
     return render(request, 'new_element.html', {'form': form})
@@ -72,18 +70,26 @@ def new_project(request):
     if request.user.is_authenticated:
 
         if request.method == 'POST':
+
             form = ProjectForm(request.POST)
 
             if form.is_valid():
                 project_obj = form.cleaned_data
                 name = project_obj['name']
                 description = project_obj['description']
-                accounts = project_obj['accounts']
+                account_str = project_obj['accounts']
+                en = len(account_str) - 1
+                account_str = account_str[:en]
+                account_list = account_str.split(", ")
 
+                print(account_list)
                 if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
                     pro = Project(name = name, description = description, creation_date = date.today())
                     pro.save()
-                    pro.accounts.set(accounts)
+                    pro.accounts.add(Account.objects.get(user=request.user))
+                    for acc in account_list:
+                        pro.accounts.add(Account.objects.get(user__username=acc))
+                        pro.save()
                     id = str(pro.id)
                     return HttpResponseRedirect('/projects/' + id)
         else:
@@ -96,15 +102,18 @@ def new_project(request):
 
 
 def add_user(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            data = form.cleaned_data
-            account = data['account']
-
-
-
+    account = request.POST.get('acc_name')
+    if (User.objects.filter(username=account).exists()) and not request.user.username == account:
+        acc_id = User.objects.get(username=account).id
+        data = {
+        'exists' : acc_id
+        }
     else:
-        return redirect('/login')
+        data = {
+        'exists' : False
+        }
+    return JsonResponse(data)
+
 
 def project_detail(request, project_id):
     if request.user.is_authenticated:
