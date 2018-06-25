@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Project, ProjectElement, Folder
+from .models import Project, ProjectElement, Folder, Account
 
 class AccountForm(forms.Form):
         username = forms.CharField(max_length = 30)
@@ -16,15 +16,18 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, max_length = 30)
 
 class ProjectForm(ModelForm):
-    account = forms.CharField(max_length = 30)
+    account = forms.CharField(max_length = 30, required = False)
+    accounts = forms.CharField(required = False)
     class Meta:
         model = Project
-        fields = ['name', 'description', 'accounts']
+        fields = ['name', 'description']
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.fields['accounts'].widget.attrs['disabled'] = True
-    #    self.fields['accounts'].queryset = Account.objects.filter(project = self.id)
+    #    self.fields['accounts'].choices = choice_list
+    #    self.fields['accounts'].widget.attrs['disabled'] = True
+        self.fields['accounts'].widget = forms.HiddenInput()
+    #   self.fields['accounts'].queryset = Account.objects.filter(project = self.id)
 
 class ElementForm(ModelForm):
     class Meta:
