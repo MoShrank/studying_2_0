@@ -24,7 +24,7 @@ $(function(){
               $(".username").text("user does not exist or is already in your project");
             }
             $(".username").show(800, function(){
-              $(".username").hide(800);
+            $(".username").hide(800);
             }
           );
         }
@@ -32,6 +32,24 @@ $(function(){
       });
     });
 
+  $(".project_element").click(function(){
+    var element_id = $(this).attr('id');
+    var project_id = $(".project").attr('id');
+    $.ajax({
+        type: "GET",
+        url: "/projects/" + project_id + "/elements/" + element_id,
+        success: function(data) {
+        //    $("#" + element_id).append('<p id=\'' + element_id + '\'>' + data.name + '</p>');
+            if($('#' + element_id + '_').length){
+              $('#' + element_id + '_').remove();
+            }
+            else{
+              $("#" + element_id).append('<p id=\'' + element_id + '_\'>' + data.description + '</p>');
+            }
+        }
+
+      });
+  });
 
 
 
