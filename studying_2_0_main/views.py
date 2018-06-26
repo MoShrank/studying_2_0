@@ -6,67 +6,57 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404, JsonResponse, HttpResponse
 from .models import Project, Account, ProjectElement, Folder
 from datetime import date
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-def new_folder(request, project_id):
-    if request.user.is_authenticated:
+@login_required
+def new_folder(request, project_id):                                            # Creates a new folder and adds it to the current project.
+    if request.method == 'POST':
+        form = FolderForm(project_id, request.POST)
+        if form.is_valid():
+            folder_obj = form.cleaned_data
+            name = folder_obj['name']
 
-        if request.method == 'POST':
-            form = FolderForm(request.POST)
-            if form.is_valid():
-                folder_obj = form.cleaned_data
-                name = folder_obj['name']
-
-                if not(Folder.objects.filter(name=name).exists()):             #checks if elemet with equal name exists
-                    fol = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
-                    fol.save()
-                    return HttpResponseRedirect('/projects/' + str(project_id))
-        else:
-            form = FolderForm()
-
-
-    return render(request, 'new_element.html', {'form': form})
-
-
-def new_element(request, project_id):
-    if request.user.is_authenticated:
-
-        if request.method == 'POST':
-            form = ElementForm(project_id, request.POST)
-
-            if form.is_valid():
-                element_obj = form.cleaned_data
-                name = element_obj['name']
-                description = element_obj['description']
-                folder = element_obj['folder_element']
-
-                ele = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
-                ele.save()
+            if not(Folder.objects.filter(name=name).exists()):
+                folder = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                folder.save()
                 return HttpResponseRedirect('/projects/' + str(project_id))
-        else:
-            form = ElementForm(project_id)
-
     else:
-        return redirect('/login')
+        form = FolderForm(project_id)
 
     return render(request, 'new_element.html', {'form': form})
 
 
+@login_required
+def new_element(request, project_id):                                           # Creates a new project_element and adds it to the current project.
+
+    if request.method == 'POST':
+        form = ElementForm(project_id, request.POST)
+        if form.is_valid():
+            element_obj = form.cleaned_data
+            name = element_obj['name']
+            description = element_obj['description']
+            folder = element_obj['parent']
+
+            element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
+            element.save()
+            return HttpResponseRedirect('/projects/' + str(project_id))
+    else:
+        form = ElementForm(project_id)
+
+    return render(request, 'new_element.html', {'form': form})
+
+@login_required
 def element_detail(request, element_id, project_id):
-        if request.user.is_authenticated:
-
-            ele = ProjectElement.objects.get(id=element_id)
-            name = ele.name
-            description = ele.description
-
-
-            data = {
-                'name' : name,
-                'description' : description
-            }
-            return JsonResponse(data)
-
+        element = ProjectElement.objects.get(id=element_id)
+        name = element.name
+        description = element.description
+        data = {
+            'name' : name,
+            'description' : description
+        }
+        return JsonResponse(data)
 
         #    try:
         #        element = ProjectElement.objects.get(pk=element_id)
@@ -79,68 +69,63 @@ def element_detail(request, element_id, project_id):
         #    return redirect('/login')
 
 
-
+@login_required
 def new_project(request):
-    if request.user.is_authenticated:
+    if request.method == 'POST':
 
-        if request.method == 'POST':
+        form = ProjectForm(request.POST)
 
-            form = ProjectForm(request.POST)
+        if form.is_valid():
+            project_obj = form.cleaned_data
+            name = project_obj['name']
+            description = project_obj['description']
+            account_str = project_obj['accounts']
 
-            if form.is_valid():
-                project_obj = form.cleaned_data
-                name = project_obj['name']
-                description = project_obj['description']
-                account_str = project_obj['accounts']
-                en = len(account_str) - 1
-                account_str = account_str[:en]
-                account_list = account_str.split(", ")
+            en = len(account_str) - 1
+            account_str = account_str[:en]
+            account_list = account_str.split(", ")
 
-                if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
-                    pro = Project(name = name, description = description, creation_date = date.today())
-                    pro.save()
-                    pro.accounts.add(Account.objects.get(user=request.user))
-                    for acc in account_list:
-                        pro.accounts.add(Account.objects.get(user__username=acc))
-                        pro.save()
-                    id = str(pro.id)
-                    return HttpResponseRedirect('/projects/' + id)
-        else:
-            form = ProjectForm()
-
+            if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
+                project = Project(name = name, description = description, creation_date = date.today())
+                project.save()
+                project.accounts.add(Account.objects.get(user=request.user))
+                for account in account_list:
+                    project.accounts.add(Account.objects.get(user__username=account))
+                    project.save()
+                id = str(pro.id)
+                return HttpResponseRedirect('/projects/' + id)
     else:
-        return redirect('/login')
+        form = ProjectForm()
 
     return render(request, 'new_project.html', {'form': form})
 
-
+@login_required
 def edit_project(request, project_id):
-    if request.user.is_authenticated:
+    if request.method == 'POST':
+        if form.is_valid():
+            project = form.cleaned_data
+            name = project_obj['name']
+            description = project_obj['description']
 
-        if request.method == 'POST':
-            if form.is_valid():
-                project = form.cleaned_data
-                name = project_obj['name']
-                description = project_obj['description']
+            if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
+                pro = Project(name = name, description = description)
+                pro.save()
+                id = str(pro.id)
+                return HttpResponseRedirect('/projects/' + id)
 
-                if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
-                    pro = Project(name = name, description = description)
-                    pro.save()
-                    id = str(pro.id)
-                    return HttpResponseRedirect('/projects/' + id)
-
-        else:
-            pro = Project.objects.get(id=project_id)
-            form = ProjectForm(initial={'name': pro.name, 'description' : pro.description})
     else:
-        return redirect('/login')
+        pro = Project.objects.get(id=project_id)
+        form = ProjectForm(initial={'name': pro.name, 'description' : pro.description})
+
 
     return render(request, 'new_project.html', {'form': form})
 
+
+@login_required
 def add_user(request):
-    account = request.POST.get('acc_name')
-    if (User.objects.filter(username=account).exists()) and not request.user.username == account:
-        acc_id = User.objects.get(username=account).id
+    account_name = request.POST.get('acc_name')
+    if (User.objects.filter(username=account_name).exists()) and not request.user.username == account_name:
+        acc_id = User.objects.get(username=account_name).id
         data = {
         'exists' : acc_id
         }
@@ -151,39 +136,32 @@ def add_user(request):
     return JsonResponse(data)
 
 
+@login_required
 def project_detail(request, project_id):
-    if request.user.is_authenticated:
+    account = Account.objects.get(user=request.user)
+    if Project.objects.get(accounts=account).id == project_id:
         try:
             project = Project.objects.get(pk=project_id)
             elements = ProjectElement.objects.filter(project=project)
             folder = Folder.objects.filter(project=project)
             context = {'project' : project, 'elements' : elements, 'folder' : folder}
+            return render(request, 'project_detail.html', context)
         except:
             raise Http404("project does not exist")
-        return render(request, 'project_detail.html', context)
     else:
-        return redirect('/login')
+        return HttpResponseRedirect('/projects')
 
-
-def welcome(request):
-    if request.user.is_authenticated:
-        username = request.user.username
-        context = {'username' : username}
-        return render(request, 'welcome.html', context)
-    else:
-        return redirect('/login')
-
-
+#@login_required
 def home(request):
-    return HttpResponseRedirect('/')
+    return render(request, 'home.html', {'username' : request.user})
 
 
+@login_required
 def projects(request):
     current_user = request.user
     if current_user.is_authenticated:
         project_list = Project.objects.filter(accounts__user__username=current_user.username)
-        context = {'project_list' : project_list}
-        return render(request, 'projects.html', context)
+        return render(request, 'projects.html', {'project_list' : project_list})
     else:
         return HttpResponseRedirect('/login')
 
@@ -198,7 +176,7 @@ def about(request):
 
 def login_user(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('/welcome')
+        return HttpResponseRedirect('/home')
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -209,8 +187,9 @@ def login_user(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                context = {'username' : username}
-                return render(request, 'welcome.html', context)
+                print('hi')
+                return HttpResponseRedirect('/home')
+
             else:
                 return HttpResponseRedirect('/login')
     else:
@@ -224,16 +203,14 @@ def logout_user(request):
     return HttpResponseRedirect('/login')
 
 
+@login_required
 def profile(request):
 
-    if request.user.is_authenticated:
         return HttpResponseRedirect('/login')
 
 
+@login_required
 def landing_page(request):                  #creates a new user account
-
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/welcome')
 
     if request.method == 'POST':
         form = AccountForm(request.POST)
@@ -244,12 +221,12 @@ def landing_page(request):                  #creates a new user account
             password = user_obj['password']
             email_address = user_obj['email_address']
             if not (User.objects.filter(username=username).exists() or User.objects.filter(email=email_address).exists()):  #checks if user/email already exists
-                u = User.objects.create_user(username, email_address, password)
-                a = Account(user = u)
-                a.save()
+                new_user = User.objects.create_user(username, email_address, password)
+                account = Account(user = new_user)
+                account.save()
                 user = authenticate(username = username, password = password)
                 login(request, user)
-                return HttpResponseRedirect('/projects')
+                return HttpResponseRedirect('/home')                         #creates user and account and links them together
             else:
                 form = AccountForm()
     else:
