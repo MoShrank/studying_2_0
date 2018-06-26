@@ -23,7 +23,7 @@ class Project(models.Model):
 class Element(MPTTModel):
     name = models.CharField(max_length = 30)
     date_added = models.DateField()
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, default = 0)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -31,16 +31,13 @@ class Element(MPTTModel):
     class Meta:
         abstract = True
 
-class Folder(Element):
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     def __str__(self):
         return self.name
 
+class Folder(Element):
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
 class ProjectElement(Element):
-    folder_element = models.ForeignKey(Folder, on_delete=models.CASCADE, blank=True, null=True)
     description = models.CharField(max_length = 500)
     parent = TreeForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, related_name='children1')
 #    file = models.FileField(upload_to='uploads/')
-
-    def __str__(self):
-        return self.name

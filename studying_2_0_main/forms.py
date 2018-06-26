@@ -24,21 +24,22 @@ class ProjectForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-    #    self.fields['accounts'].choices = choice_list
-    #    self.fields['accounts'].widget.attrs['disabled'] = True
         self.fields['accounts'].widget = forms.HiddenInput()
-    #   self.fields['accounts'].queryset = Account.objects.filter(project = self.id)
 
 class ElementForm(ModelForm):
     class Meta:
         model = ProjectElement
-        fields = ['name', 'description', 'folder_element']
+        fields = ['name', 'description', 'parent']
 
     def __init__(self, current_project_id, *args, **kwargs):
         super(ElementForm, self).__init__(*args, **kwargs)
-        self.fields['folder_element'].queryset = Folder.objects.filter(project = current_project_id)
+        self.fields['parent'].queryset = Folder.objects.filter(project = current_project_id)
 
 class FolderForm(ModelForm):
     class Meta:
         model = Folder
         fields = ['name', 'parent']
+
+    def __init__(self, current_project_id, *args, **kwargs):
+        super(FolderForm, self).__init__(*args, **kwargs)
+        self.fields['parent'].queryset = Folder.objects.filter(project = current_project_id)
