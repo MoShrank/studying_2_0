@@ -39,10 +39,10 @@ def new_element(request, project_id):                                           
             name = element_obj['name']
             description = element_obj['description']
             folder = element_obj['parent']
-            file = request.FILES['file']
-            print(file)
 
-            element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder, file=file)
+            element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
+            if request.FILES:
+                element.file = request.FILES['file']
             element.save()
 
             return HttpResponseRedirect('/projects/' + str(project_id))
