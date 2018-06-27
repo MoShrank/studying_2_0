@@ -8,3 +8,7 @@
 .project_element {
   color: darkblue;
 }
+
+.pdf_field {
+  display: none;
+}
