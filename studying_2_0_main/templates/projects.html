@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/projectlist_style.css' %}"/>
+{% endblock %}
 
 {% block content %}
-<div class="projects">
+<div>
 {% for project in project_list %}
-  <li><a href='/projects/{{ project.id }}'> {{project}}</a> </li>
+  <li class="project"><a href='/projects/{{ project.id }}'> {{project}}</a> </li>
 {% endfor %}
-  <a class = "new" href='new_project'>new project<a/>
+  <a class = "new" href='new_project'>+ new project<a/>
 </div>
 {% endblock %}

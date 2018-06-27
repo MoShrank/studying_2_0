@@ -1,6 +1,6 @@
 
 body {
-
+  font-family: Sans-serif;
 }
 
 .navbar {
@@ -10,13 +10,12 @@ body {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  width: 15%;
+  width: 10%;
   height: 100%;
   background-color: #4f5060;
 }
 
 .navbar_element a {
-  font-family: Sans-serif;
   color: #aeafc1;
   display: block;
   text-decoration: none;
@@ -28,47 +27,23 @@ body {
 }
 
 .welcome {
-  font-size: 32px;
+  width: 85%;
   text-align: center;
-}
-
-.new {
-  background-color: lightblue;
-}
-
-.element {
-  position: relative;
-
-  margin: 0;
 }
 
 .divider {
   position: absolute;
-  left: 15%;
-
+  left: 10%;
+  width: 10%;
   margin: 0;
 }
 
-.projects {
-  list-style-type: none;
-}
-
-.projects a {
-  text-decoration: none;
-}
 
 .username {
   display: none;
   color: red;
 }
 
-.project_element {
-  color: darkblue;
-}
-
-.project {
-
-}
 
 p a {
   text-decoration: none;

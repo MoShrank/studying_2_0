@@ -8,6 +8,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
     <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
     <script src="{% static 'js/functions.js' %}"></script>
+    {% block style %}
+    {% endblock %}
 
   </head>
   <body>
@@ -21,6 +23,8 @@
         <li class = "navbar_element"><a href="/about">About</a></li>
         <li class = "navbar_element"><a href="/logout">Logout</a></li>
       </ul>
+
+
       <div class="divider">
         {% block content %}
         {% endblock %}

@@ -32,15 +32,19 @@ def new_folder(request, project_id):                                            
 def new_element(request, project_id):                                           # Creates a new project_element and adds it to the current project.
 
     if request.method == 'POST':
-        form = ElementForm(project_id, request.POST)
+
+        form = ElementForm(project_id, request.POST, request.FILES)
         if form.is_valid():
             element_obj = form.cleaned_data
             name = element_obj['name']
             description = element_obj['description']
             folder = element_obj['parent']
+            file = request.FILES['file']
+            print(file)
 
-            element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
+            element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder, file=file)
             element.save()
+
             return HttpResponseRedirect('/projects/' + str(project_id))
     else:
         form = ElementForm(project_id)
@@ -148,6 +152,7 @@ def project_detail(request, project_id):
             return render(request, 'project_detail.html', context)
         except:
             raise Http404("project does not exist")
+
     else:
         return HttpResponseRedirect('/projects')
 
@@ -209,8 +214,11 @@ def profile(request):
         return HttpResponseRedirect('/login')
 
 
-@login_required
 def landing_page(request):                  #creates a new user account
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/home')
+
 
     if request.method == 'POST':
         form = AccountForm(request.POST)

@@ -40,4 +40,4 @@ class Folder(Element):
 class ProjectElement(Element):
     description = models.CharField(max_length = 500)
     parent = TreeForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, related_name='children1')
-#    file = models.FileField(upload_to='uploads/')
+    file = models.FileField(upload_to='uploads/', blank = True, null = True)
