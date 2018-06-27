@@ -32,9 +32,11 @@ $(function(){
       });
     });
 
+
   $(".project_element").click(function(){
+
     var element_id = $(this).attr('id');
-    var project_id = $(".project").attr('id');
+    var project_id = $(".project_name").attr('id');
     $.ajax({
         type: "GET",
         url: "/projects/" + project_id + "/elements/" + element_id,
@@ -42,9 +44,13 @@ $(function(){
         //    $("#" + element_id).append('<p id=\'' + element_id + '\'>' + data.name + '</p>');
             if($('#' + element_id + '_').length){
               $('#' + element_id + '_').remove();
+              $(".pdf_field").attr('src', '');
+              $(".pdf_field").hide();
             }
             else{
               $("#" + element_id).append('<p id=\'' + element_id + '_\'>' + data.description + '</p>');
+              $(".pdf_field").show();
+              $(".pdf_field").attr('src', '/uploads/uploads/pdf.pdf');
             }
         }
 

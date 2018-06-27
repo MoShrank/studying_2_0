@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% load mptt_tags %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/project_detail_style.css' %}"/>
+{% endblock %}
+
 
 
 {% block content %}
-
-<a href='/projects/{{project.id}}/edit'> edit </a>
-
-<p class='project' id="{{project.id}}">Name: {{ project }} </p>
+<h2 class='project_name' id="{{project.id}}">{{ project }} </h2>
 <p>Description: {{ project.description }} </p>
 <P>Elements: </p>
 
@@ -28,7 +30,10 @@
 {% endif %}
 {% endfor%}
 
-
+<a href='/projects/{{project.id}}/edit'> edit </a>
+<a href=''> delete </a>
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
 <a href='/projects/{{project.id}}/elements/new_element/folder' id="folder"> add folder</a>
+
+<embed src="" class="pdf_field" width="500" height="375" type='application/pdf'>
 {% endblock %}

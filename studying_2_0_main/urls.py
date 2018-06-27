@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'studying_2_0_main'
 
@@ -20,3 +22,7 @@ path('projects/<int:project_id>/elements/<int:element_id>', views.element_detail
 path('projects/<int:project_id>/elements/new_element/element', views.new_element, name='new_element'),
 path('projects/<int:project_id>/elements/new_element/folder', views.new_folder, name='new_folder'),
 ]
+
+
+if settings.DEBUG is True:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

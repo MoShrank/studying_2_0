@@ -29,7 +29,7 @@ class ProjectForm(ModelForm):
 class ElementForm(ModelForm):
     class Meta:
         model = ProjectElement
-        fields = ['name', 'description', 'parent']
+        fields = ['name', 'description', 'parent', 'file']
 
     def __init__(self, current_project_id, *args, **kwargs):
         super(ElementForm, self).__init__(*args, **kwargs)

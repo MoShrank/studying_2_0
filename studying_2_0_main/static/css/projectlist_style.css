@@ -1,0 +1,19 @@
+
+.new {
+  color: #0f891e;
+  text-decoration: none;
+  text-align: center;
+}
+
+.project:hover {
+  background-color: #aeafc1;
+}
+
+.project {
+  list-style-type: none;
+  text-align: center;
+}
+
+.project a {
+  text-decoration: none;
+}
