@@ -1,13 +1,58 @@
 {% extends 'base.html' %}
 
+{% block style %}
+
+<style>
+
+.accounts {
+  overflow: auto;
+  list-style-type: none;
+  max-height: 3em;
+  width: 10em;
+  left: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.account {
+
+}
+
+li {
+  line-height: 1em;
+}
+
+li:hover {
+  background-color: lightblue;
+  cursor:context-menu;
+}
+
+div {
+  position: absolute;
+}
+
+.add_button {
+  width: 100%;
+}
+
+</style>
+
+{% endblock %}
 
 {% block content %}
 
   <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <div class="username"></div>
-    <button type="button" id="id_add_acc"> add </button>
+
+    <div>
+    account:<br>
+    <input type="text" id="id_account">
+      <ul class="accounts">
+
+      </ul>
+      <button class="add_button" onclick="add_account()" type="button" id="id_add_acc"> add </button>
+      <div>
     <input type="submit" value="create"/>
   </form>
 
