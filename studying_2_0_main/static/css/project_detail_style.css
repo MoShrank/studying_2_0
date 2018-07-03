@@ -11,4 +11,11 @@
 
 .pdf_field {
   display: none;
+  position: absolute;
+  left: 10%;
+
+}
+
+a {
+  text-decoration: none;
 }
