@@ -1,7 +1,8 @@
+
 var quo = "\'"
 
 
-function add_account(){              //adds account to project when clicked
+function add_account(){              //adds account to project
   var acc_name = $("#id_account").val();
   $.ajax({
       type: "POST",
@@ -13,8 +14,6 @@ function add_account(){              //adds account to project when clicked
         var exists = data.exists
           if(exists != false && !($('#' + acc_name).length > 0)){
 
-      //      $(".username").css("color", "green");
-      //      $(".username").text("successfully added user");
             $("#id_account").val("");
             $(".accounts").append("<li class=" + quo + "account" + quo + "id=" + quo + acc_name + quo + ">" + acc_name + "</li>");
             $("#id_account").append("<input type=" + quo + "hidden" + quo + "id=" +
@@ -22,16 +21,9 @@ function add_account(){              //adds account to project when clicked
               "name=" + quo + "accounts" + quo + "value=" + quo + acc_name + quo + ">");
           }
           else{
-      //      $(".username").css("color", "red");
-      //      $(".username").text("user does not exist or is already in your project");
+
           }
-      //    $(".username").show(800, function(){
-      //    $(".username").hide(800);
-
-      //    }
-      //  );
       }
-
     });
   }
 
