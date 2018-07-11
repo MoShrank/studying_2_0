@@ -1,0 +1,66 @@
+
+{% extends 'base.html' %}
+
+{% block style %}
+
+<style>
+
+.accounts {
+  overflow: auto;
+  list-style-type: none;
+  max-height: 3em;
+  width: 10em;
+  left: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.account {
+
+}
+
+li {
+  line-height: 1em;
+}
+
+li:hover {
+  background-color: lightblue;
+  cursor:context-menu;
+}
+
+div {
+  position: absolute;
+}
+
+.add_button {
+  width: 100%;
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+
+<div>
+account:<br>
+<input type="text" id="id_account">
+{% for acc in acc_list %}
+  <input type="hidden" id={{acc}} name="accounts" value={{acc}}>
+{% endfor %}
+  <ul class="accounts">
+    {% for acc in acc_list %}
+      <li class="account" id="acc">{{acc}}</li>
+    {% endfor %}
+  </ul>
+  <button class="add_button" onclick="add_account()" type="button" id="id_add_acc"> add </button>
+  <div>
+
+    <input type="submit" value="Update" />
+</form>
+
+{% endblock %}

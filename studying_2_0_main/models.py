@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
+from django.urls import reverse
 
 # Create your models here.
 
 
 class Account(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account')
 
     def __str__(self):
         return self.user.username

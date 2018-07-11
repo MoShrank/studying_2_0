@@ -7,59 +7,79 @@ from django.http import HttpResponseRedirect, Http404, JsonResponse, HttpRespons
 from .models import Project, Account, ProjectElement, Folder
 from datetime import date
 from django.contrib.auth.decorators import login_required
+from django.views import View
+from django.utils.decorators import method_decorator
+from .decorators import user_is_project_author
+from django.views.generic import ListView
+from django.views.generic.edit import FormView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+
+
+project_decorator = [login_required, user_is_project_author]
+
 
     #views that require a login:
 
 
     #views for project:
 
-@login_required
-def new_project(request):
-    if request.method == 'POST':
+@method_decorator(login_required, name='dispatch')
+class Projects(ListView):
+    context_object_name = 'project_list'
+    template_name = 'projects.html'
 
-        form = ProjectForm(request.POST)
+    def get_queryset(self):
+        return Project.objects.filter(accounts__user__username=self.request.user)
 
-        if form.is_valid():
-            project_obj = form.cleaned_data
-            name = project_obj['name']
-            description = project_obj['description']
-            account_list = request.POST.getlist('accounts')
+@method_decorator(login_required, name='dispatch')
+class NewProject(CreateView):
+    form_class = ProjectForm
+    template_name = 'new_project.html'
+    success_url = '/projects/'
 
-            if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
-                project = Project(name = name, description = description, creation_date = date.today())
-                project.save()
-                project.accounts.add(Account.objects.get(user=request.user))
-                for account in account_list:
-                    project.accounts.add(Account.objects.get(user__username=account))
-                    project.save()
-                id = str(project.id)
-                return HttpResponseRedirect('/projects/' + id)
-    else:
-        form = ProjectForm()
+    def form_valid(self, form):
+        form.instance.creation_date = date.today()
+        form.instance.save()
+        form.instance.accounts.add(Account.objects.get(user=self.request.user))
+        account_list = self.request.POST.getlist('accounts')
+        print(account_list)
+        for account in account_list:
+            form.instance.accounts.add(Account.objects.get(user__username=account))
+        form.instance.save()
 
-    return render(request, 'new_project.html', {'form': form})
-
-
-@login_required
-def edit_project(request, project_id):
-    if request.method == 'POST':
-        if form.is_valid():
-            project = form.cleaned_data
-            name = project_obj['name']
-            description = project_obj['description']
-
-            if not(Project.objects.filter(name=name).exists()):             #checks if project with equal name exists
-                pro = Project(name = name, description = description)
-                pro.save()
-                id = str(pro.id)
-                return HttpResponseRedirect('/projects/' + id)
-
-    else:
-        pro = Project.objects.get(id=project_id)
-        form = ProjectForm(initial={'name': pro.name, 'description' : pro.description})
+        return super().form_valid(form)
 
 
-    return render(request, 'new_project.html', {'form': form})
+@method_decorator(login_required, name='dispatch')
+class EditProject(UpdateView):
+    form_class = ProjectForm
+    template_name = 'edit_project.html'
+    success_url = '/projects/'
+
+    def get_object(self, queryset=None):
+        return Project.objects.get(id=self.kwargs["project_id"])
+
+    def update_url(self, project_id):
+        self.success_url += project_id + '/'
+
+    def form_valid(self, form):
+        new_account_list = self.request.POST.getlist('accounts')
+        print(new_account_list)
+        obj = self.get_object()
+        obj.accounts.clear()
+        form.instance.save()
+        form.instance.accounts.add(Account.objects.get(user = self.request.user))
+        for account in new_account_list:
+                form.instance.accounts.add(Account.objects.get(user__username=account))
+        form.instance.save()
+
+        self.update_url(str(obj.id))
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['acc_list'] = self.get_object().accounts.exclude(user = self.request.user)
+        return context
 
 
 @login_required
@@ -94,16 +114,6 @@ def project_detail(request, project_id):
 
     else:
         return HttpResponseRedirect('/projects')
-
-
-@login_required
-def projects(request):
-    current_user = request.user
-    if current_user.is_authenticated:
-        project_list = Project.objects.filter(accounts__user__username=current_user.username)
-        return render(request, 'projects.html', {'project_list' : project_list})
-    else:
-        return HttpResponseRedirect('/login')
 
 
         #views for elements:

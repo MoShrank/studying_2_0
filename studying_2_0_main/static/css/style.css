@@ -4,6 +4,7 @@ body {
 }
 
 .navbar {
+  overflow: hidden;
   position: fixed;
   left: 0;
   top: 0;
@@ -16,6 +17,7 @@ body {
 }
 
 .navbar_element a {
+  overflow: hidden;
   color: #aeafc1;
   display: block;
   text-decoration: none;
@@ -24,6 +26,12 @@ body {
 
 .navbar a:hover {
   background-color: #393c77;
+}
+
+.navbar input[type=text] {
+    float: right;
+    border: none;
+    font-size: 17px;
 }
 
 .welcome {
