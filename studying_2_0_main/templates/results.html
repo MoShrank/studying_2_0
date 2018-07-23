@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+{% for element in element_list %}
+
+  <li class="project_element" id="{{element.id}}">{{element}}</li>
+
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<form action="" enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  Tag: <input type="text" name="tag" id="tag"><br>
+
+  <input type="submit" value="search"/>
+</form>
+
+
+
+{% endblock %}

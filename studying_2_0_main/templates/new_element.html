@@ -6,6 +6,16 @@
   <form action="" enctype="multipart/form-data" method="post">
     {% csrf_token %}
     {{ form.as_p }}
+
+    <div>
+    tags:<br>
+    <input type="text" id="id_tag">
+      <ul class="tags">
+
+      </ul>
+      <button class="add_button" onclick="add_tag()" type="button" id="id_add_tag"> add </button>
+      <div>
+
     <input type="submit" value="create"/>
   </form>
 

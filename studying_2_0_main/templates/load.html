@@ -1,0 +1,16 @@
+
+
+
+
+<div class="folder" id="{{current_folder}}_container" style="display: block;">
+  {% for folder in folder_list %}
+    <div class="folder" id="{{folder.id}}_expand">
+      <div id="{{folder.id}}" class="expand">+</div>
+      <li>{{folder}}</li>
+    </div>
+  {% endfor %}
+
+  {% for element in element_list %}
+    <li class="project_element" id="{{element.id}}">{{element}}</li>
+  {% endfor %}
+</div>

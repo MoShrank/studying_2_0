@@ -27,11 +27,21 @@ function add_account(){              //adds account to project
     });
   }
 
+function add_tag(){
+  var tag_name = $("#id_tag").val();
+
+  $("#id_tag").val("");
+  $(".tags").append("<li class=" + quo + "tag" + quo + "id=" + quo + tag_name + quo + ">" + tag_name + "</li>");
+  $("#id_tag").append("<input type=" + quo + "hidden" + quo + "id=" +
+    quo + tag_name + quo +
+    "name=" + quo + "tags" + quo + "value=" + quo + tag_name + quo + ">");
+
+}
 
 
 $(function(){
 
-  $(".project_element").click(function(){
+  $(document).on('click', ".project_element", function(){
 
     var element_id = $(this).attr('id');
     var project_id = $(".project_name").attr('id');
@@ -48,7 +58,7 @@ $(function(){
             else{
               $("#" + element_id).append('<p id=\'' + element_id + '_\'>' + data.description + '</p>');
               $(".pdf_field").show();
-              $(".pdf_field").attr('src', '/uploads/uploads/pdf.pdf');
+              $(".pdf_field").attr('src', data.file_path);
             }
         }
 
@@ -64,10 +74,51 @@ $(function(){
   });
 
 
+  $(".project_elements").on('click', '.expand' , function(){
+
+    var folder_id = $(this).attr('id');
+    var project_id = $(".project_name").attr('id');
+
+    $.ajax({
+        type: "GET",
+        url: "/projects/" + project_id + '/' + folder_id,
+        success: function(data) {
+
+            if($("#" + folder_id).contents().get(0).nodeValue == '+') {
+              expand('#' + folder_id + '_expand', data);
+              $("#" + folder_id).text('-');
+            }
+
+            else {
+              decrease('#' + folder_id + '_container');
+                $("#" + folder_id).text('+');
+            }
+
+
+        }
+
+      });
+
+
+  });
+
+
+
+
+
+
 });
 
 
+function expand(selector, data) {
+  $(selector).after(data);
 
+
+}
+
+function decrease(selector) {
+ $(selector).remove();
+}
 
 
 

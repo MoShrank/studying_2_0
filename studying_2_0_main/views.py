@@ -4,13 +4,13 @@ from .forms import AccountForm, LoginForm, ProjectForm, ElementForm, FolderForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404, JsonResponse, HttpResponse
-from .models import Project, Account, ProjectElement, Folder
+from .models import Project, Account, ProjectElement, Folder, Tag
 from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from .decorators import user_is_project_author
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -42,7 +42,6 @@ class NewProject(CreateView):
         form.instance.save()
         form.instance.accounts.add(Account.objects.get(user=self.request.user))
         account_list = self.request.POST.getlist('accounts')
-        print(account_list)
         for account in account_list:
             form.instance.accounts.add(Account.objects.get(user__username=account))
         form.instance.save()
@@ -64,7 +63,6 @@ class EditProject(UpdateView):
 
     def form_valid(self, form):
         new_account_list = self.request.POST.getlist('accounts')
-        print(new_account_list)
         obj = self.get_object()
         obj.accounts.clear()
         form.instance.save()
@@ -79,6 +77,21 @@ class EditProject(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['acc_list'] = self.get_object().accounts.exclude(user = self.request.user)
+        return context
+
+
+@method_decorator(project_decorator, name='dispatch')
+class ProjectDetail(DetailView):
+    template_name = 'project_detail.html'
+
+    def get_object(self, queryset=None):
+        return Project.objects.get(id=self.kwargs["project_id"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        context['element_list'] = ProjectElement.objects.filter(project=obj).filter(parent=None)
+        context['folder_list'] = Folder.objects.filter(project=obj).filter(parent=None)
         return context
 
 
@@ -97,27 +110,15 @@ def add_user(request):
     return JsonResponse(data)
 
 
-@login_required
-def project_detail(request, project_id):
-    account = Account.objects.get(user=request.user)
-    project = Project.objects.get(id=project_id)
-    if project.accounts.get(id=account.id):
-
-        try:
-            project = Project.objects.get(pk=project_id)
-            elements = ProjectElement.objects.filter(project=project)
-            folder = Folder.objects.filter(project=project)
-            context = {'project' : project, 'elements' : elements, 'folder' : folder}
-            return render(request, 'project_detail.html', context)
-        except:
-            raise Http404("project does not exist")
-
-    else:
-        return HttpResponseRedirect('/projects')
-
-
         #views for elements:
 
+@login_required
+class NewFolder(CreateView):
+    form_class = FolderForm
+
+    def form_valid(self, form):
+
+        return super().form_valid(form)
 
 @login_required
 def new_folder(request, project_id):                                            # Creates a new folder and adds it to the current project.
@@ -126,15 +127,63 @@ def new_folder(request, project_id):                                            
         if form.is_valid():
             folder_obj = form.cleaned_data
             name = folder_obj['name']
+            parent = folder_obj['parent']
 
             if not(Folder.objects.filter(name=name).exists()):
-                folder = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id))
+                folder = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id), parent=parent)
                 folder.save()
                 return HttpResponseRedirect('/projects/' + str(project_id))
     else:
         form = FolderForm(project_id)
 
     return render(request, 'new_element.html', {'form': form})
+
+
+@login_required
+def folder_detail(request, project_id, folder_id):
+
+    folder_list = Folder.objects.filter(parent__id = folder_id)
+    element_list = ProjectElement.objects.filter(parent__id = folder_id)
+
+    context_data = {
+        'current_folder' : folder_id,
+        'folder_list' : folder_list,
+        'element_list' : element_list
+    }
+    return render(request, 'load.html', context_data)
+    #return JsonResponse(data)
+
+
+@method_decorator(login_required, name='dispatch')
+class NewElement(CreateView):
+    form_class = ElementForm
+    template_name = 'new_element.html'
+    success_url = '/projects/'
+
+    def get_object(self, queryset=None):
+        return Project.objects.get(id=self.kwargs["project_id"])
+
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['current_project_id'] = self.get_object()
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.date_added = date.today()
+        form.instance.save()
+        tag_list = self.request.POST.getlist('tags')
+        print(tag_list)
+        print('hi')
+        for tag in tag_list:
+            if not Tag.objects.filter(name=tag).exists():
+                new_tag = Tag(name = tag)
+                new_tag.save()
+            form.instance.tags.add(Tag.objects.get(name=tag))
+        form.instance.save()
+
+        return super().form_valid(form)
+
 
 
 @login_required
@@ -151,7 +200,9 @@ def new_element(request, project_id):                                           
 
             element = ProjectElement(name = name, description = description, date_added = date.today(), project = Project.objects.get(pk=project_id), parent = folder)
             if request.FILES:
-                element.file = request.FILES['file']
+                file = request.FILES['file']
+                element.file = file
+
             element.save()
 
             return HttpResponseRedirect('/projects/' + str(project_id))
@@ -164,10 +215,10 @@ def new_element(request, project_id):                                           
 @login_required
 def element_detail(request, element_id, project_id):
         element = ProjectElement.objects.get(id=element_id)
-        name = element.name
+        file_path = element.file.url
         description = element.description
         data = {
-            'name' : name,
+            'file_path' : file_path,
             'description' : description
         }
         return JsonResponse(data)
@@ -269,3 +320,14 @@ def contact(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def search(request):
+    if request.method == 'POST':
+        tag = request.POST.get('tag')
+        return HttpResponseRedirect('results/' + tag)
+
+    return render(request, 'search.html')
+
+def results(request, tag):
+    element_list = ProjectElement.objects.filter(tags__name = tag)
+    return render(request, 'results.html', { 'element_list' : element_list})

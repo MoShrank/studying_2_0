@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load mptt_tags %}
+
 
 {% block style %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/project_detail_style.css' %}"/>
@@ -13,25 +13,24 @@
 <p>Description: {{ project.description }} </p>
 <P>Elements: </p>
 
-  {% for fol,structure in folder|tree_info %}
-      {% if structure.new_level %}<ul><li>{% else %}</li><li>{% endif %}
-          {{ fol.name }}
-          {% for ele in elements %}
-              {% if fol == ele.parent %}
-              <li class='project_element' id='{{ele.id}}'> {{ele}} </li>
-              {% endif %}
+<ul class="project_elements">
 
-          {% endfor %}
-      {% for level in structure.closed_levels %}</li></ul>{% endfor %}
-  {% endfor %}
-{%for ele in elements %}
-{% if ele.parent is null %}
-<li class='project_element' id='{{ele.id}}'> {{ele}} </li>
-{% endif %}
-{% endfor%}
+{% for folder in folder_list %}
+  <div class="folder" id="{{folder.id}}_expand">
+    <div id="{{folder.id}}" class="expand">+</div>
+    <li>{{folder}}</li>
+  </div>
+{% endfor %}
+
+{% for element in element_list %}
+  <li class="project_element" id="{{element.id}}">{{element}}</li>
+{% endfor %}
+
+</ul>
+
+
 
 <a href='/projects/{{project.id}}/edit'> edit </a>
-<a href=''> delete </a>
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
 <a href='/projects/{{project.id}}/elements/new_element/folder' id="folder"> add folder</a>
 
