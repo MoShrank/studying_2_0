@@ -1,5 +1,5 @@
 
-{% extends 'base.html' %}
+{% extends 'project_detail.html' %}
 
 {% block style %}
 
@@ -41,7 +41,7 @@ div {
 {% endblock %}
 
 
-{% block content %}
+{% block content2 %}
 
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
@@ -60,7 +60,7 @@ account:<br>
   <button class="add_button" onclick="add_account()" type="button" id="id_add_acc"> add </button>
   <div>
 
-    <input type="submit" value="Update" />
+    <input type="submit" value="save" />
 </form>
 
 {% endblock %}

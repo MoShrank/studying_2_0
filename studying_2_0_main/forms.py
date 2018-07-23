@@ -20,10 +20,6 @@ class ProjectForm(ModelForm):
         model = Project
         fields = ['name', 'description']
 
-    def __init__(self, *args, **kwargs):
-        super(ProjectForm, self).__init__(*args, **kwargs)
-        #self.fields['accounts'].widget = forms.HiddenInput()
-
 class ElementForm(ModelForm):
     class Meta:
         model = ProjectElement
