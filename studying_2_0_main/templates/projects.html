@@ -8,7 +8,7 @@
 {% block content %}
 <div>
 {% for project in project_list %}
-  <li class="project"><a href='/projects/{{ project.id }}'> {{project}}</a> </li>
+  <li class="project"><a href='/projects/{{project.slug}}-{{ project.id }}'> {{project}}</a> </li>
 {% endfor %}
   <a class = "new" href='new_project'>+ new project<a/>
 </div>

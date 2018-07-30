@@ -39,6 +39,10 @@ function add_tag(){
 }
 
 
+
+
+
+
 $(function(){
 
   $(document).on('click', ".project_element", function(){
@@ -78,10 +82,23 @@ $(function(){
 
     var folder_id = $(this).attr('id');
     var project_id = $(".project_name").attr('id');
+    var href = document.location.href;
+    var lastPathSegment = href.substr(href.lastIndexOf('/') + 1);
+    var detail;
+
+    if(lastPathSegment == 'edit') {
+      detail = false;
+    }
+    else {
+      detail = true;
+    }
 
     $.ajax({
         type: "GET",
         url: "/projects/" + project_id + '/' + folder_id,
+        data: {
+          detail : detail
+        },
         success: function(data) {
 
             if($("#" + folder_id).contents().get(0).nodeValue == '+') {
@@ -102,6 +119,24 @@ $(function(){
 
   });
 
+  $("#edit_project").on('change', '.project_elements :checkbox' , function(){
+
+      var check_count = $("input:checked").length;
+
+      if(check_count == 0){
+        $("#delete").prop("disabled", true);
+        $("#edit").prop("disabled", true);
+      }
+      else if(check_count == 1){
+        $("#delete").prop("disabled", false);
+        $("#edit").prop("disabled", false);
+      }
+      else if(check_count > 1){
+        $("#delete").prop("disabled", false);
+        $("#edit").prop("disabled", true);
+      }
+
+  });
 
 
 
@@ -112,13 +147,18 @@ $(function(){
 
 function expand(selector, data) {
   $(selector).after(data);
-
-
 }
 
 function decrease(selector) {
  $(selector).remove();
 }
+
+
+
+
+
+
+
 
 
 

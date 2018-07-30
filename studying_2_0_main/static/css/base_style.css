@@ -28,12 +28,6 @@ body {
   background-color: #393c77;
 }
 
-.navbar input[type=text] {
-    float: right;
-    border: none;
-    font-size: 17px;
-}
-
 .welcome {
   width: 85%;
   text-align: center;
@@ -55,15 +49,4 @@ body {
 p a {
   text-decoration: none;
   color: black;
-}
-
-
-input[type=checkbox] {
-   position: absolute;
-   top: -9999px;
-   left: -9999px;
-}
-
-input[type=checkbox]:checked ~ ul {
-   display: none;
 }
