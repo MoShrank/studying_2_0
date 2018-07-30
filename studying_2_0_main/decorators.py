@@ -7,7 +7,7 @@ def user_is_project_author(function):
     def wrap(request, *args, **kwargs):
         project = Project.objects.get(pk=kwargs['project_id'])
         account_set = project.accounts.all()
-        account = User.objects.get(user=request.user)
+        account = request.user
         if account in account_set:
             return function(request, *args, **kwargs)
         else:

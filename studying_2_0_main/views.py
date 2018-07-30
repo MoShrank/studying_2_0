@@ -110,7 +110,8 @@ class EditProject(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         obj = self.get_object()
-        context['acc_list'] = obj.accounts.exclude(user = self.request.user)
+        print(obj.accounts.all())
+        context['acc_list'] = obj.accounts.all().exclude(id=self.request.user.id)
         context['element_list'] = ProjectElement.objects.filter(project=obj).filter(parent=None)
         context['folder_list'] = Folder.objects.filter(project=obj).filter(parent=None)
         return context
