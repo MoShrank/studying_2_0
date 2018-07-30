@@ -324,10 +324,13 @@ def results(request, tag):
 def home(request):
     return render(request, 'home.html', {'username' : request.user})
 
-
 @login_required
 def profile(request):
-    return HttpResponseRedirect('/login')
+    return render(request, 'profile.html', {'user': request.user})
+
+@login_required
+def profile_edit(request):
+    return render(request, 'profile_edit.html', {'form': form})
 
 
     #views that don't require a login:
@@ -335,7 +338,7 @@ def profile(request):
 
     #login, logout and register view
 
-def landing_page(request):                  #creates a new user account
+def landing_page(request):                 #creates a new user account
 
     if request.user.is_authenticated:
         return HttpResponseRedirect('/home')
