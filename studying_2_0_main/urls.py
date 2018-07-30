@@ -17,13 +17,18 @@ path('profile/', views.profile, name='profile'),
 path('projects/', Projects.as_view()),
 path('projects/new_project', NewProject.as_view()),
 path('projects/<int:project_id>/edit', EditProject.as_view()),
-path('projects/<int:project_id>/', ProjectDetail.as_view()),
+path('projects/<slug:slug>-<int:project_id>/', ProjectDetail.as_view()),
 path('projects/new_project/add_user', views.add_user, name='add_user'),
 
 path('projects/<int:project_id>/elements/<int:element_id>', views.element_detail, name='element_detail'),
+path('projects/<int:project_id>/<int:folder_id>', views.folder_detail, name='folder_detail'),
 
 path('projects/<int:project_id>/elements/new_element/element', NewElement.as_view()),
 path('projects/<int:project_id>/elements/new_element/folder', views.new_folder, name='new_folder'),
+
+path('projects/<int:project_id>/edit/folder/<int:folder_id>', EditFolder.as_view()),
+path('projects/<int:project_id>/edit/element/<int:element_id>', EditElement.as_view()),
+path('projects/<int:project_id>/edit/delete', views.delete_element, name='delete_element'),
 
 path('search', views.search, name='search'),
 path('results/<str:tag>', views.results, name='results'),

@@ -1,0 +1,20 @@
+
+
+
+
+<div class="folder" id="{{current_folder}}_container" style="display: block;">
+  {% for folder in folder_list %}
+    <div class="folder" id="{{folder.id}}_expand">
+      <input type="checkbox" name="folder" value="{{folder.id}}">
+      <div id="{{folder.id}}" class="expand">+</div>
+      <li>{{folder}}</li>
+    </div>
+  {% endfor %}
+
+  {% for element in element_list %}
+    <div class="element">
+      <input type="checkbox" name="element" value="{{element.id}}">
+      <li class="project_element" id="{{element.id}}">{{element}}</li>
+    </div>
+  {% endfor %}
+</div>

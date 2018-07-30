@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Project, ProjectElement, Folder, Account
+from .models import Project, ProjectElement, Folder
 
 class AccountForm(forms.Form):
         username = forms.CharField(max_length = 30)
