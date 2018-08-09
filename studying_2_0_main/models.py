@@ -7,12 +7,15 @@ from django.utils.text import slugify
 class Project(models.Model):
     name = models.CharField(max_length = 30)
     description = models.CharField(max_length = 500)
-    creation_date = models.DateField()
+    creation_date = models.DateField(auto_now_add=True)
     accounts = models.ManyToManyField(User)
-    slug = models.SlugField(max_length = 30)
+    slug = models.SlugField(max_length = 30, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if self.id is None:
+            self.slug = slugify(self.name)
+            if not self.slug:
+                self.slug = 'element'
         super(Project, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -47,4 +50,5 @@ class ProjectElement(Element):
     description = models.CharField(max_length = 500)
     parent = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True)
     file = models.FileField(upload_to='uploads/', blank=True, null=True)
+    source = models.URLField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, null=True, blank=True)

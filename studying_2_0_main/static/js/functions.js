@@ -36,6 +36,8 @@ function add_tag(){
     quo + tag_name + quo +
     "name=" + quo + "tags" + quo + "value=" + quo + tag_name + quo + ">");
 
+
+
 }
 
 
@@ -53,17 +55,13 @@ $(function(){
         type: "GET",
         url: "/projects/" + project_id + "/elements/" + element_id,
         success: function(data) {
-        //    $("#" + element_id).append('<p id=\'' + element_id + '\'>' + data.name + '</p>');
-            if($('#' + element_id + '_').length){
-              $('#' + element_id + '_').remove();
-              $(".pdf_field").attr('src', '');
-              $(".pdf_field").hide();
+          if(document.getElementsByClassName("pdf_field").length == 0) {
+              $('.element').append(data);
             }
-            else{
-              $("#" + element_id).append('<p id=\'' + element_id + '_\'>' + data.description + '</p>');
-              $(".pdf_field").show();
-              $(".pdf_field").attr('src', data.file_path);
-            }
+          else {
+            $('.element').empty();
+          }
+
         }
 
       });

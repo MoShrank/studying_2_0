@@ -25,7 +25,7 @@ path('projects/<int:project_id>/elements/<int:element_id>', views.element_detail
 path('projects/<int:project_id>/<int:folder_id>', views.folder_detail, name='folder_detail'),
 
 path('projects/<int:project_id>/elements/new_element/element', NewElement.as_view()),
-path('projects/<int:project_id>/elements/new_element/folder', views.new_folder, name='new_folder'),
+path('projects/<int:project_id>/elements/new_element/folder', NewFolder.as_view()),
 
 path('projects/<int:project_id>/edit/folder/<int:folder_id>', EditFolder.as_view()),
 path('projects/<int:project_id>/edit/element/<int:element_id>', EditElement.as_view()),

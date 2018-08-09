@@ -24,7 +24,7 @@
 {% endfor %}
 
 {% for element in element_list %}
-  <li class="project_element" id="{{element.id}}">{{element}}</li>
+  <li class="project_element" id="{{element.id}}" >{{element}}</li>
 {% endfor %}
 
 </ul>
@@ -35,6 +35,8 @@
 <a href='/projects/{{project.id}}/elements/new_element/element'> add element</a>
 <a href='/projects/{{project.id}}/elements/new_element/folder' id="folder"> add folder</a>
 
-<embed src="" class="pdf_field" width="500" height="375" type='application/pdf'>
+<div class='element'>
+
+</div>
 
 {% endblock %}
