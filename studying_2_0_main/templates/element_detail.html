@@ -1,9 +1,8 @@
-{% extends 'base.html' %}
 
 
-{% block content %}
 
-<p>Name: {{element}} </p>
-<p>Description: {{element.description}}
 
-{% endblock %}
+
+<p>description: {{element.description}}</p>
+<p> <a href="{{element.source}}"> hi </a> </p>
+<embed src='{{element.file.url}}' class="pdf_field" width="500" height="375" type='application/pdf'>

@@ -39,8 +39,7 @@ class NewProject(CreateView):
     success_url = '/projects/'
 
     def form_valid(self, form):
-        form.instance.creation_date = date.today()
-        form.instance.save()
+        form.save()
         form.instance.accounts.add(self.request.user)
         account_list = self.request.POST.getlist('accounts')
         for account in account_list:
@@ -59,18 +58,21 @@ class EditProject(UpdateView):
     def delete_element(self):
         try:
             for folder in self.request.POST.getlist('folder'):
+
                 folder_obj = Folder.objects.get(id=folder)
 
                 folder_childs = Folder.objects.filter(parent=folder_obj.pk) #sets all folders inside folder_obj to folder_obj parent
-                folder_obj.set_parents(folder_childs)
+                if folder_childs:
+                    folder_obj.set_parents(folder_childs)
 
                 folder_childs = ProjectElement.objects.filter(parent=folder_obj.pk) #sets all elements inside folder_obj to folder_obj parent
-                folder_obj.set_parentd(folder_childs)
+                if folder_childs:
+                    folder_obj.set_parents(folder_childs)
 
                 folder_obj.delete()
 
         except Exception:
-            print("no folder to delete")
+            print('no folder to delete')
 
         try:
             for element in self.request.POST.getlist('element'):
@@ -86,6 +88,8 @@ class EditProject(UpdateView):
         obj = self.get_object()
         if 'delete' in self.request.POST:
             self.delete_element()
+            self.success_url = self.success_url + str(obj.id) + '/edit'
+
 
         elif 'edit' in self.request.POST:
             self.success_url = self.success_url + str(obj.id) + '/edit/'
@@ -110,7 +114,6 @@ class EditProject(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         obj = self.get_object()
-        print(obj.accounts.all())
         context['acc_list'] = obj.accounts.all().exclude(id=self.request.user.id)
         context['element_list'] = ProjectElement.objects.filter(project=obj).filter(parent=None)
         context['folder_list'] = Folder.objects.filter(project=obj).filter(parent=None)
@@ -149,30 +152,22 @@ def add_user(request):
 
         #views for elements:
 
-@login_required
+@method_decorator(login_required, name='dispatch')
 class NewFolder(CreateView):
     form_class = FolderForm
+    template_name = 'new_element.html'
+    success_url = '/projects/'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['current_project_id'] = self.kwargs["project_id"]
+        return kwargs
 
     def form_valid(self, form):
+        form.instance.date_added = date.today()
+        form.instance.project = Project.objects.get(id=self.kwargs["project_id"])
+        form.instance.save()
         return super().form_valid(form)
-
-@login_required
-def new_folder(request, project_id):                                            # Creates a new folder and adds it to the current project.
-    if request.method == 'POST':
-        form = FolderForm(project_id, request.POST)
-        if form.is_valid():
-            folder_obj = form.cleaned_data
-            name = folder_obj['name']
-            parent = folder_obj['parent']
-
-            if not(Folder.objects.filter(name=name).exists()):
-                folder = Folder(name = name, date_added = date.today(), project = Project.objects.get(pk=project_id), parent=parent)
-                folder.save()
-                return HttpResponseRedirect('/projects/' + str(project_id))
-    else:
-        form = FolderForm(project_id)
-
-    return render(request, 'new_element.html', {'form': form})
 
 
 @login_required
@@ -253,23 +248,14 @@ def new_element(request, project_id):                                           
 def element_detail(request, element_id, project_id):
         element = ProjectElement.objects.get(id=element_id)
         file_path = element.file.url
-        description = element.description
-        data = {
-            'file_path' : file_path,
-            'description' : description
+        print(file_path)
+        context_data = {
+            'element' : element,
+            'file_path' : file_path
+
         }
-        return JsonResponse(data)
 
-        #    try:
-        #        element = ProjectElement.objects.get(pk=element_id)
-        #        element_list = ProjectElement.objects.filter(elements__id=element_id)
-        #        context = {'element' : element}
-        #    except:
-        #        raise Http404("element does not exist")
-        #    return render(request, 'element_detail.html', context)
-        #else:
-        #    return redirect('/login')
-
+        return render(request, 'element_detail.html', context_data)
 
 
     #other views:
@@ -379,7 +365,6 @@ def login_user(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                print('hi')
                 return HttpResponseRedirect('/home')
 
             else:

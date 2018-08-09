@@ -1,4 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/project_detail_style.css' %}"/>
+
+{% endblock %}
 
 
 
@@ -6,7 +13,8 @@
 
 {% for element in element_list %}
 
-  <li class="project_element" id="{{element.id}}">{{element}}</li>
+  <div><li class="project_element" id="{{element.id}}" >{{element}}</li> in {{element.project}}</div>
+
 
 {% endfor %}
 
